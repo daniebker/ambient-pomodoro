@@ -1,6 +1,28 @@
 import Head from 'next/head'
+import { formatDuration, intervalToDuration, addMinutes, Duration } from 'date-fns'
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+
+  const [end] = useState<Date>(addMinutes(new Date(), 50))
+  const [formattedDuration, setFormattedDuration] = useState<string>("")
+
+  useEffect(() => { 
+    const interval = setInterval(() => {
+     updateDuration()
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [])
+  
+  const updateDuration = () => {
+    const duration = intervalToDuration({
+      start: new Date(), 
+      end
+    })
+
+    setFormattedDuration(formatDuration(duration, { format: ['hours', 'minutes', 'seconds'] }))
+  }
+
   return (
     <div className='px-8 py-8'>
       <Head>
@@ -14,6 +36,7 @@ export default function Home() {
 
       <main>
         <h1>Ambient Pomodoro 🍅</h1>
+        <p>{formattedDuration}</p>
       </main>
     </div>
   );

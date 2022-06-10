@@ -9,6 +9,7 @@ exports[`renders homepage unchanged 1`] = `
       <h1>
         Ambient Pomodoro 🍅
       </h1>
+      <p />
     </main>
   </div>
 </div>
