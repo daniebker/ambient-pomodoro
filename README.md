@@ -13,3 +13,4 @@ yarn test
 ## To do
 
 - [ ] Add time remaining to title
+- [ ] Add credits
