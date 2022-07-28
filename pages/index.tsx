@@ -36,38 +36,38 @@ export default function Home() {
   const [formattedDuration, setFormattedDuration] = useState<string>()
 
   const [audio] = useState<HTMLAudioElement | undefined>(typeof Audio !== "undefined" ? new Audio('/audio/Kasper-Bowl-4-Articulation-2-Microphone-1-5s.mp3') : undefined)
-  
+
   useEffect(() => { 
-    if (started) { 
-      const interval = setInterval(() => {
-        updateDuration()
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [started, end])
-  
-  const updateDuration = () => {
-    const start = new Date()
-    const duration = intervalToDuration({
-      start, 
-      end
-    })
+    const updateDuration = () => {
+        const start = new Date()
+        const duration = intervalToDuration({
+          start, 
+          end
+        })
 
-    if (isAfter(start, end) && !isBreak) {
-      setIsBreak(true)
-      if (audio) {
-        audio.volume = 0.2
-        audio.play()        
+        if (isAfter(start, end) && !isBreak) {
+          setIsBreak(true)
+          if (audio) {
+            audio.volume = 0.2
+            audio.play()        
+          }
+          setStarted(false)
+        } else if (isAfter(start, end) && isBreak) {
+          setIsBreak(false)
+          setStarted(false)
+          setEndTime(selectedTimer)
+        }
+
+        setFormattedDuration(formatDuration(duration, { format: ['hours', 'minutes', 'seconds'] }))
       }
-      setStarted(false)
-    } else if (isAfter(start, end) && isBreak) {
-      setIsBreak(false)
-      setStarted(false)
-      setEndTime(selectedTimer)
-    }
 
-    setFormattedDuration(formatDuration(duration, { format: ['hours', 'minutes', 'seconds'] }))
-  }
+      if (started) { 
+        const interval = setInterval(() => {
+          updateDuration()
+        }, 1000);
+        return () => clearInterval(interval);
+      }
+  }, [started, end, audio, isBreak, selectedTimer])
 
   const handleStart = () => {
     const duration = isBreak ? breaks[selectedTimer] : selectedTimer
