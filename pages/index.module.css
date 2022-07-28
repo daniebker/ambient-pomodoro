@@ -1,0 +1,11 @@
+.backgroundImage {
+    z-index: -100
+}
+
+.content {
+    z-index: 1
+}
+
+.lightText {
+    color: #FFF
+}
