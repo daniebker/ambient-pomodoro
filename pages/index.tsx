@@ -1,15 +1,14 @@
 import Head from 'next/head'
 import { formatDuration, intervalToDuration, addMinutes, isAfter } from 'date-fns'
 import Image from "next/image"
-import { useState, useEffect } from 'react';
-import jBishopWaterBackground from "../public/backgrounds/jeremy-bishop-QtIXL7C4bB0-unsplash.jpg"
+import { useState, useEffect, useCallback } from 'react';
 
 import styles from './index.module.css'
 import { Button } from '@/components/button';
 
 const backgrounds = [
   {
-    src: jBishopWaterBackground,
+    src: "/backgrounds/jeremy-bishop-QtIXL7C4bB0-unsplash.jpg",
     credit: "Jeremy Bishop",
     link: "https://unsplash.com/@jeremybishop?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText",
     source: "Unsplash",
@@ -37,16 +36,7 @@ export default function Home() {
 
   const [audio] = useState<HTMLAudioElement | undefined>(typeof Audio !== "undefined" ? new Audio('/audio/Kasper-Bowl-4-Articulation-2-Microphone-1-5s.mp3') : undefined)
   
-  useEffect(() => { 
-    if (started) { 
-      const interval = setInterval(() => {
-        updateDuration()
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [started, end])
-  
-  const updateDuration = () => {
+  const updateDuration = useCallback(() => {
     const start = new Date()
     const duration = intervalToDuration({
       start, 
@@ -67,8 +57,17 @@ export default function Home() {
     }
 
     setFormattedDuration(formatDuration(duration, { format: ['hours', 'minutes', 'seconds'] }))
-  }
+  }, [end, isBreak, audio, selectedTimer])
 
+  useEffect(() => { 
+    if (started) { 
+      const interval = setInterval(() => {
+        updateDuration()
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [started, updateDuration])
+  
   const handleStart = () => {
     const duration = isBreak ? breaks[selectedTimer] : selectedTimer
     setEndTime(duration)
